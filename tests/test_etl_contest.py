@@ -2,7 +2,7 @@ import pymysql as pm
 import pymysql.cursors as pc
 
 from etl.merge_tables import merge_tables
-from tests.helpers import check_etl_result_relevance
+from etl.shortcuts import check_etl_result_relevance
 
 
 def test_containers_assets_is_ready(mysql_source,
