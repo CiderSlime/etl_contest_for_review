@@ -1,6 +1,9 @@
 import pymysql as pm
 import pymysql.cursors as pc
 
+from etl.merge_tables import merge_tables
+from tests.helpers import check_etl_result_relevance
+
 
 def test_containers_assets_is_ready(mysql_source,
                                     mysql_destination):
@@ -32,8 +35,7 @@ def test_containers_assets_is_ready(mysql_source,
     assert dst_result['total'] == 0
 
 
-def test_data_transfer(mysql_source,
-                       mysql_destination):
+def test_data_transfer(mysql_source, mysql_destination):
     """
 
     :param mysql_source: Доступы к mysql-источника с исходными данными
@@ -41,6 +43,15 @@ def test_data_transfer(mysql_source,
     :return:
     """
 
-    #   put your code for testing here!
+    merge_tables(mysql_source, mysql_destination)
 
-    pass
+    check_etl_result_relevance(mysql_source, mysql_destination)
+
+
+def test_data_continue_transfer(mysql_source, mysql_destination_with_partial_result):
+    """Проверка кейса с возобновлением обработки."""
+
+    merge_tables(mysql_source, mysql_destination_with_partial_result)
+
+    check_etl_result_relevance(mysql_source, mysql_destination_with_partial_result)
+

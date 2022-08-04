@@ -1,7 +1,10 @@
+import datetime
+
 import pytest
 import pathlib
 import pymysql
 
+from etl.shortcuts import write_row
 from .helpers import (
     load_json_config,
     teardown_database_schema,
@@ -63,3 +66,17 @@ def mysql_destination(mysql_dst_credentials):
             setup_schema_data(cur, destination_setup_data)
 
     return mysql_dst_credentials
+
+
+@pytest.fixture()
+def mysql_destination_with_partial_result(mysql_destination):
+
+    with pymysql.connect(**mysql_destination, autocommit=True) as conn:
+        with conn.cursor() as cur:
+
+            write_row(cur, (1, datetime.datetime(2020, 1, 1, 0, 0, 0), 1, -1, 100, "Subscription purchase"))
+            write_row(cur, (2, datetime.datetime(2020, 1, 1, 1, 0, 0), 1, -1, 100, "Subscription purchase"))
+            write_row(cur, (3, datetime.datetime(2020, 1, 1, 2, 0, 0), 2, -1, 100, "Subscription update"))
+            write_row(cur, (4, datetime.datetime(2020, 1, 1, 2, 0, 0), 2, -1, 100, "Subscription update"))
+
+    return mysql_destination
