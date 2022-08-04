@@ -29,8 +29,4 @@ def check_etl_result_relevance(mysql_source, mysql_destination):
             ):
                 result_row = get(dst_cur, "SELECT * FROM transactions_denormalized WHERE id=%s" % transaction[0])
 
-                assert result_row[1] == transaction[1]  # dt
-                assert result_row[2] == transaction[2]  # idoper
-                assert result_row[3] == transaction[3]  # move
-                assert result_row[4] == transaction[4]  # amount
-                assert result_row[5] == transaction[5]  # name
+                assert result_row == transaction
